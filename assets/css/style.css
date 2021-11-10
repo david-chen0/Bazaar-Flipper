@@ -1,0 +1,8 @@
+td {
+    text-align: center;
+}
+
+th {
+    overflow: wrap;
+    width: 10%;
+}

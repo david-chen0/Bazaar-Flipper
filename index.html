@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    </head>
+    <body>
+        <h1>Bazaar Flipper</h1>
+        <div id="inputs">
+            <p>
+                My current bazaar tax rate is 
+                <select name="taxSelector" id="taxRate">
+                    <!-- Only three tax rates available so far -->
+                    <option value="1.25">1.25%</option>
+                    <option value="1.125">1.125%</option>
+                    <option value="1">1.0%</option>
+                </select>
+                My current budget is <input id="budget" type="text"> coins.
+            </p>
+        </div>
+        <div id="messages">
+            <p>
+                If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests.
+                * = Sell this item to NPC instead of bazaar.
+            </p>
+        </div>
+        <button type="button" id="refreshButton"></button>
+        <div id="content"></div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="assets/js/script.js"></script>
+</html>
