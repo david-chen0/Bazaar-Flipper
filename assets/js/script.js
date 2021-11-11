@@ -2,6 +2,8 @@ const APIKey = "3bdd91ff-4947-4b0d-9136-f31b5ea77e8d"; // Hypixel Skyblock API K
 const domainURL = "https://api.hypixel.net";
 var productData = {};
 var itemData = {};
+const updateTime = 300000; // Milliseconds between each update, 60000 is one minute
+let data = [];
 
 
 // Functions
@@ -31,8 +33,10 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+
+let updateContent = setInterval(update, updateTime);
+
 function update() {
-    var data = [];
     for (i in productData.products) {
         // buy_summary and sell_summary detailed in Hypixel's Bazaar API guide
         let buySummary = productData.products[i].buy_summary;
@@ -64,7 +68,8 @@ function update() {
         product.profitMargin = (100 * product.profit / product.buyOrder).toFixed(2);
         product.expectedReturn = (product.profitMargin * budget / 100).toFixed(0);
         
-        let ordersPerHour = Math.min(product.buyOrdersFilledPerHour, product.sellOffersFilledPerHour);
+        // Orders per hour is limited by buy orders, sell offers, and the maximum amount you can afford
+        let ordersPerHour = Math.min(product.buyOrdersFilledPerHour, product.sellOffersFilledPerHour, budget / product.buyOrder);
         product.expectedProfitPerHour = (ordersPerHour * product.profitMargin / 100).toFixed(1);
 
         data.push(product);
@@ -72,25 +77,36 @@ function update() {
 
     data.sort(function compare(a, b) { return b.expectedProfitPerHour - a.expectedProfitPerHour });
 
+    displayContent(searchFilter);
+}
+
+// Displays the filtered content
+function displayContent(filter) {
     let content = $('<table>').addClass('results');
-    let headerFields = "<th> Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
+    let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
     let header = $('<tr>').html(headerFields);
     content.append(header);
     for (i in data) {
         let product = data[i];
-        let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
+        if (filter === "" || product.name.toUpperCase().indexOf(filter) > -1) {
+            let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
             numberWithCommas(product.sellOffer) + "</td><td>" + numberWithCommas(product.profit) + " (" + numberWithCommas(product.profitMargin) + 
             "%)</td><td>"+ numberWithCommas(product.expectedReturn) + "</td><td>" + numberWithCommas(product.expectedProfitPerHour) + "</td>";
-        let row = $('<tr>').html(rowFields);
-        content.append(row);
+            let row = $('<tr>').html(rowFields);
+            content.append(row);
+        }
     }
     $('#content').html(content);
-
 }
 
 
-// Refreshes the table when refresh button is clicked
-$('#refreshButton').on('click', update);
+// Resets the update timer and refreshes the table when refresh button is clicked
+function refresh() {
+    clearInterval(updateContent);
+    update();
+    updateEveryMinute = setInterval(update, updateTime);
+}
+$('#refreshButton').on('click', refresh);
 
 
 // Run on startup
@@ -107,6 +123,14 @@ $('#budget').keyup(function() {
     budget = $(this).val();
     update();
 });
+
+// Filters the list by whatever is in the search bar
+let searchFilter = "";
+$('#searchBar').keyup(function() {
+    searchFilter = $(this).val();
+    let filter = searchFilter.toUpperCase();
+    displayContent(filter);
+})
 
 getData(productCallback, "/skyblock/bazaar?key" + APIKey); // Gets all the product data
 getData(itemCallback, "/resources/skyblock/items?key" + APIKey); // Gets all the item data
