@@ -3,7 +3,16 @@ const domainURL = "https://api.hypixel.net";
 var productData = {};
 var itemData = {};
 const updateTime = 300000; // Milliseconds between each update, 60000 is one minute
+let nameMap = new Map(); // Maps from item id to recognizable name(can't use item name since it uses illegal characters)
 let data = [];
+
+
+// Replacing some of the names Hypixel messed up
+nameMap.set('GOBLIN_EGG_GREEN', 'Green Goblin Egg');
+nameMap.set('GOBLIN_EGG_RED', 'Red Goblin Egg');
+nameMap.set('GOBLIN_EGG_YELLOW', 'Yellow Goblin Egg');
+nameMap.set('GOBLIN_EGG_BLUE', 'Blue Goblin Egg');
+nameMap.set('RED_GIFT', 'Red Gift');
 
 
 // Functions
@@ -51,7 +60,12 @@ function update() {
         }
 
         let product = {};
-        product.name = item.name;
+        if (nameMap.has(item.id)) {
+            product.name = nameMap.get(item.id);
+        } else {
+            product.name = item.name;
+        }
+
         product.buyOrder = (Math.max.apply(null, sellSummary.map(function(p) { return p.pricePerUnit; })) + 0.1).toFixed(1);
         product.sellOffer = (Math.min.apply(null, buySummary.map(function(p) { return p.pricePerUnit; })) - 0.1).toFixed(1);
 
