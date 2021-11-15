@@ -2,7 +2,7 @@ const APIKey = "3bdd91ff-4947-4b0d-9136-f31b5ea77e8d"; // Hypixel Skyblock API K
 const domainURL = "https://api.hypixel.net";
 var productData = {};
 var itemData = {};
-const updateTime = 300000; // Milliseconds between each update, 60000 is one minute
+//const updateTime = 100; // Milliseconds between each update, 60000 is one minute
 let nameMap = new Map(); // Maps from item id to recognizable name(can't use item name since it uses illegal characters)
 let data = [];
 
@@ -42,8 +42,6 @@ function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-
-let updateContent = setInterval(update, updateTime);
 
 function update() {
     for (i in productData.products) {
@@ -94,15 +92,16 @@ function update() {
     displayContent(searchFilter);
 }
 
+
 // Displays the filtered content
-let content = $('<table>').addClass('results');
 function displayContent(filter) {
+    let content = $('<table>').addClass('info');
     let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
     let header = $('<tr>').html(headerFields);
     content.append(header);
     for (i in data) {
         let product = data[i];
-        if (filter === "" || product.name.toUpperCase().indexOf(filter) > -1) {
+        if (product.name.toUpperCase().indexOf(filter) > -1) {
             let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
             numberWithCommas(product.sellOffer) + "</td><td>" + numberWithCommas(product.profit) + " (" + numberWithCommas(product.profitMargin) + 
             "%)</td><td>"+ numberWithCommas(product.expectedReturn) + "</td><td>" + numberWithCommas(product.expectedProfitPerHour) + "</td>";
@@ -114,13 +113,25 @@ function displayContent(filter) {
 }
 
 
+/* This overloaded the Hypixel server and bugged out later API requests(at least from my API key)
+// Updates the content every updateTime interval
+let updateContent = setInterval(update, updateTime); 
+
+
 // Resets the update timer and refreshes the table when refresh button is clicked
 function refresh() {
     clearInterval(updateContent);
     update();
     updateEveryMinute = setInterval(update, updateTime);
-}
-$('#refreshButton').on('click', refresh);
+} */
+
+//REFRESH IS CURRENTLY BUGGED IT WILL DISPLAY THE SAME PRODUCTs AN EXTRA TIME, DEFINITELY A PROBLEM WITH displayContent(filter)
+// Resets the search filter to none and updates the content
+$('#refreshButton').on('click', function() {
+    searchFilter = "";
+    $('#searchBar').val(searchFilter);
+    update();
+}); 
 
 
 // Run on startup
