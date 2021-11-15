@@ -95,8 +95,8 @@ function update() {
 }
 
 // Displays the filtered content
+let content = $('<table>').addClass('results');
 function displayContent(filter) {
-    let content = $('<table>').addClass('results');
     let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
     let header = $('<tr>').html(headerFields);
     content.append(header);
