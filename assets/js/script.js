@@ -44,6 +44,7 @@ function numberWithCommas(x) {
 
 
 function update() {
+    data = [];
     for (i in productData.products) {
         // buy_summary and sell_summary detailed in Hypixel's Bazaar API guide
         let buySummary = productData.products[i].buy_summary;
@@ -125,7 +126,7 @@ function refresh() {
     updateEveryMinute = setInterval(update, updateTime);
 } */
 
-//REFRESH IS CURRENTLY BUGGED IT WILL DISPLAY THE SAME PRODUCTs AN EXTRA TIME, DEFINITELY A PROBLEM WITH displayContent(filter)
+//Current errors: It  will use past product data instead of new product data(PROBLEM MAY BE FIXED TRY AT LATER TIME)
 // Resets the search filter to none and updates the content
 $('#refreshButton').on('click', function() {
     searchFilter = "";
