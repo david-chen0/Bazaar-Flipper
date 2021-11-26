@@ -25,7 +25,7 @@ function itemCallback(result) {
     if (result.success) {
         itemData = result;
     } else {
-        setTimeout(getData(itemCallback), 1000);
+        setTimeout(getData(itemCallback), 10000);
     }
 }
 
@@ -34,7 +34,7 @@ function productCallback(result) {
         productData = result;
         update();
     } else {
-        setTimeout(getData(productCallback), 1000);
+        setTimeout(getData(productCallback), 10000);
     }
 }
 
@@ -95,13 +95,23 @@ function update() {
 
 
 // Displays the filtered content
-function displayContent(filter) {
+function displayContent(filter) {/*
+    if (!!document.getElementById('infoTable')) {
+        console.log('hi');
+        document.getElementById('infoTable').remove();
+    }*/
+    
     let content = $('<table>').addClass('info');
+    content.attr('id', 'infoTable');
     let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
     let header = $('<tr>').html(headerFields);
     content.append(header);
     for (i in data) {
         let product = data[i];
+        if (product.name === 'Carrot') {
+            console.log('yes');
+            console.log(product.buyOrder);
+        }
         if (product.name.toUpperCase().indexOf(filter) > -1) {
             let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
             numberWithCommas(product.sellOffer) + "</td><td>" + numberWithCommas(product.profit) + " (" + numberWithCommas(product.profitMargin) + 
@@ -126,12 +136,11 @@ function refresh() {
     updateEveryMinute = setInterval(update, updateTime);
 } */
 
-//Current errors: It  will use past product data instead of new product data(PROBLEM MAY BE FIXED TRY AT LATER TIME)
 // Resets the search filter to none and updates the content
 $('#refreshButton').on('click', function() {
     searchFilter = "";
     $('#searchBar').val(searchFilter);
-    update();
+    getData(productCallback, "/skyblock/bazaar?key" + APIKey);
 }); 
 
 
@@ -158,5 +167,5 @@ $('#searchBar').keyup(function() {
     displayContent(filter);
 })
 
-getData(productCallback, "/skyblock/bazaar?key" + APIKey); // Gets all the product data
+getData(productCallback, "/skyblock/bazaar?key" + APIKey); // Gets all the Bazaar Product Data
 getData(itemCallback, "/resources/skyblock/items?key" + APIKey); // Gets all the item data
