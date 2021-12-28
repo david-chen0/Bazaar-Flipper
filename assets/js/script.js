@@ -24,19 +24,20 @@ function getData(callbackFunction, str) {
 function itemCallback(result) {
     if (result.success) {
         itemData = result;
+        getData(productCallback, "/skyblock/bazaar?key" + APIKey); // Gets all the Bazaar Product Data, needs to run after item data is obtained
     } else {
-        setTimeout(getData(itemCallback), 10000);
+        setTimeout(getData(itemCallback), 1000);
     }
 }
 
 let newData = false; // Boolean to check if new data has been queried
 function productCallback(result) {
-    if (result.success) {
+   if (result.success) {
         productData = result;
         newData = true;
         update();
     } else {
-        setTimeout(getData(productCallback), 10000);
+        setTimeout(getData(productCallback), 1000);
     }
 }
 
@@ -177,7 +178,7 @@ $('#budget').keyup(function() {
     update();
 });
 
-// 0: Item Name, 1: Profit Margin, 2: Expected Return, 3: Profit per Hour
+// "0": Item Name; "1": Profit Margin; "2": Expected Return; "3": Profit per Hour
 let sortFunction = "3"; // Default sort function(Profit per Hour)
 $('#sortFunction').val(sortFunction);
 $('#sortFunction').on('change', function() {
@@ -193,5 +194,4 @@ $('#searchBar').keyup(function() {
     displayContent(filter);
 })
 
-getData(productCallback, "/skyblock/bazaar?key" + APIKey); // Gets all the Bazaar Product Data
-getData(itemCallback, "/resources/skyblock/items?key" + APIKey); // Gets all the item data
+getData(itemCallback, "/resources/skyblock/items?key" + APIKey); // Gets all the item data, also calls getProductData after success
