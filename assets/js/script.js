@@ -29,9 +29,11 @@ function itemCallback(result) {
     }
 }
 
+let newData = false; // Boolean to check if new data has been queried
 function productCallback(result) {
     if (result.success) {
         productData = result;
+        newData = true;
         update();
     } else {
         setTimeout(getData(productCallback), 10000);
@@ -44,8 +46,14 @@ function numberWithCommas(x) {
 
 
 function update() {
-    data = [];
+    if (newData) {
+        data = [];
+    }
     for (i in productData.products) {
+        if (!newData) { // No need to execute loop if no new data is queried
+            break;
+        }
+
         // buy_summary and sell_summary detailed in Hypixel's Bazaar API guide
         let buySummary = productData.products[i].buy_summary;
         let sellSummary = productData.products[i].sell_summary;
@@ -59,6 +67,7 @@ function update() {
         }
 
         let product = {};
+        product.name = '';
         if (nameMap.has(item.id)) {
             product.name = nameMap.get(item.id);
         } else {
@@ -87,8 +96,25 @@ function update() {
 
         data.push(product);
     }
+    newData = false;
 
-    data.sort(function compare(a, b) { return b.expectedProfitPerHour - a.expectedProfitPerHour });
+    switch (sortFunction) {
+        case "0":
+            data.sort(function compare0(a, b) { return a.name.localeCompare(b.name); });
+            break;
+        case "1":
+            data.sort(function compare1(a, b) { return b.profitMargin - a.profitMargin });
+            break;
+        case "2":
+            data.sort(function compare2(a, b) { return b.expectedReturn - a.expectedReturn });
+            break;
+        case "3":
+            data.sort(function compare3(a, b) { return b.expectedProfitPerHour - a.expectedProfitPerHour });
+            break;
+        default:
+            console.log("stop messing with my page lol");
+            break;
+    }
 
     displayContent(searchFilter);
 }
@@ -98,7 +124,7 @@ function update() {
 function displayContent(filter) {
     let content = $('<table>').addClass('info');
     content.attr('id', 'infoTable');
-    let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
+    let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Profit per Hour</th>";
     let header = $('<tr>').html(headerFields);
     content.append(header);
     for (i in data) {
@@ -150,6 +176,14 @@ $('#budget').keyup(function() {
     budget = $(this).val();
     update();
 });
+
+// 0: Item Name, 1: Profit Margin, 2: Expected Return, 3: Profit per Hour
+let sortFunction = "3"; // Default sort function(Profit per Hour)
+$('#sortFunction').val(sortFunction);
+$('#sortFunction').on('change', function() {
+    sortFunction = $(this).val();
+    update();
+})
 
 // Filters the list by whatever is in the search bar
 let searchFilter = "";

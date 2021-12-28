@@ -23,6 +23,16 @@
         <div id="messages">
             <p>If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests.</p>
             <p>* = Sell this item to NPC instead of bazaar.</p>
+            <p>
+                Sort by: 
+                <select name="sortFunction" id="sortFunction">
+                    <!-- Only three tax rates available so far -->
+                    <option value="0">Item Name</option>
+                    <option value="1">Profit Margin</option>
+                    <option value="2">Expected Return</option>
+                    <option value="3">Profit per Hour</option>
+                </select>
+            </p>
         </div>
         <button type="button" id="refreshButton">Refresh data</button>
         <input type="text" id="searchBar" placeholder="Search by name">
