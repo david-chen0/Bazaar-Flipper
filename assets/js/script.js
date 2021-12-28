@@ -95,12 +95,7 @@ function update() {
 
 
 // Displays the filtered content
-function displayContent(filter) {/*
-    if (!!document.getElementById('infoTable')) {
-        console.log('hi');
-        document.getElementById('infoTable').remove();
-    }*/
-    
+function displayContent(filter) {
     let content = $('<table>').addClass('info');
     content.attr('id', 'infoTable');
     let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Expected Profit per Hour</th>";
@@ -108,10 +103,6 @@ function displayContent(filter) {/*
     content.append(header);
     for (i in data) {
         let product = data[i];
-        if (product.name === 'Carrot') {
-            console.log('yes');
-            console.log(product.buyOrder);
-        }
         if (product.name.toUpperCase().indexOf(filter) > -1) {
             let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
             numberWithCommas(product.sellOffer) + "</td><td>" + numberWithCommas(product.profit) + " (" + numberWithCommas(product.profitMargin) + 
@@ -135,6 +126,7 @@ function refresh() {
     update();
     updateEveryMinute = setInterval(update, updateTime);
 } */
+
 
 // Resets the search filter to none and updates the content
 $('#refreshButton').on('click', function() {

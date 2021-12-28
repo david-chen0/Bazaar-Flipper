@@ -2,9 +2,12 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500&display=swap" rel="stylesheet">
     </head>
     <body>
-        <h1>Bazaar Flipper</h1>
+        <h1 id="title">Bazaar Flipper</h1>
         <div id="inputs">
             <p>
                 My current bazaar tax rate is 
@@ -14,14 +17,12 @@
                     <option value="1.125">1.125%</option>
                     <option value="1">1.0%</option>
                 </select>
-                My current budget is <input id="budget" type="text"> coins.
             </p>
+            <p>My current budget is <input id="budget" type="text"> coins.</p>
         </div>
         <div id="messages">
-            <p>
-                If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests.
-                * = Sell this item to NPC instead of bazaar.
-            </p>
+            <p>If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests.</p>
+            <p>* = Sell this item to NPC instead of bazaar.</p>
         </div>
         <button type="button" id="refreshButton">Refresh data</button>
         <input type="text" id="searchBar" placeholder="Search by name">
