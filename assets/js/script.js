@@ -49,55 +49,51 @@ function numberWithCommas(x) {
 function update() {
     if (newData) {
         data = [];
+        for (i in productData.products) {
+            // buy_summary and sell_summary detailed in Hypixel's Bazaar API guide
+            let buySummary = productData.products[i].buy_summary;
+            let sellSummary = productData.products[i].sell_summary;
+            let quickStatus = productData.products[i].quick_status;
+            let item = itemData.items.find(function(o) {
+                return o.id === i;
+            });
+
+            if (buySummary.length <= 0 || sellSummary.length <= 0) { // Shouldn't ever trigger but just in case
+                continue;
+            }
+
+            let product = {};
+            product.name = '';
+            if (nameMap.has(item.id)) {
+                product.name = nameMap.get(item.id);
+            } else {
+                product.name = item.name;
+            }
+
+            product.buyOrder = (Math.max.apply(null, sellSummary.map(function(p) { return p.pricePerUnit; })) + 0.1).toFixed(1);
+            product.sellOffer = (Math.min.apply(null, buySummary.map(function(p) { return p.pricePerUnit; })) - 0.1).toFixed(1);
+
+            product.buyOrdersFilledPerHour = quickStatus.buyMovingWeek / 168;
+            product.sellOffersFilledPerHour = quickStatus.sellMovingWeek / 168;
+
+            if (product.sellOffer <= item.npc_sell_price) { // Handles the case where NPC pays equal or more than bazaar
+                product.sellOffer = item.npc_sell_price; // Sell to NPC instead of bazaar
+                product.name = product.name + "*"; // Indicates to user to sell to NPC instead of bazaar
+                product.sellOffersFilledPerHour = Infinity;
+            }
+
+            product.profit = ((1 - (taxRate / 100)) * (product.sellOffer - product.buyOrder)).toFixed(1);
+            product.profitMargin = (100 * product.profit / product.buyOrder).toFixed(2);
+            product.expectedReturn = (product.profitMargin * budget / 100).toFixed(0);
+            
+            // Orders per hour is limited by buy orders, sell offers, and the maximum amount you can afford
+            let ordersPerHour = Math.min(product.buyOrdersFilledPerHour, product.sellOffersFilledPerHour, budget / product.buyOrder);
+            product.expectedProfitPerHour = (ordersPerHour * product.profitMargin / 100).toFixed(1);
+
+            data.push(product);
+        }
+        newData = false;
     }
-    for (i in productData.products) {
-        if (!newData) { // No need to execute loop if no new data is queried
-            break;
-        }
-
-        // buy_summary and sell_summary detailed in Hypixel's Bazaar API guide
-        let buySummary = productData.products[i].buy_summary;
-        let sellSummary = productData.products[i].sell_summary;
-        let quickStatus = productData.products[i].quick_status;
-        let item = itemData.items.find(function(o) {
-            return o.id === i;
-        });
-
-        if (buySummary.length <= 0 || sellSummary.length <= 0) { // Should never trigger
-            continue;
-        }
-
-        let product = {};
-        product.name = '';
-        if (nameMap.has(item.id)) {
-            product.name = nameMap.get(item.id);
-        } else {
-            product.name = item.name;
-        }
-
-        product.buyOrder = (Math.max.apply(null, sellSummary.map(function(p) { return p.pricePerUnit; })) + 0.1).toFixed(1);
-        product.sellOffer = (Math.min.apply(null, buySummary.map(function(p) { return p.pricePerUnit; })) - 0.1).toFixed(1);
-
-        product.buyOrdersFilledPerHour = quickStatus.buyMovingWeek / 168;
-        product.sellOffersFilledPerHour = quickStatus.sellMovingWeek / 168;
-
-        if (product.sellOffer <= item.npc_sell_price) { // Handles the case where NPC pays more than bazaar
-            product.sellOffer = item.npc_sell_price; // Sell to NPC instead of bazaar
-            product.name = product.name + "*"; // Indicates to user to sell to NPC instead of bazaar
-            product.sellOffersFilledPerHour = Infinity;
-        }
-
-        product.profit = (((1 - (taxRate / 100)) * product.sellOffer) - product.buyOrder).toFixed(1);
-        product.profitMargin = (100 * product.profit / product.buyOrder).toFixed(2);
-        product.expectedReturn = (product.profitMargin * budget / 100).toFixed(0);
-        
-        // Orders per hour is limited by buy orders, sell offers, and the maximum amount you can afford
-        let ordersPerHour = Math.min(product.buyOrdersFilledPerHour, product.sellOffersFilledPerHour, budget / product.buyOrder);
-        product.expectedProfitPerHour = (ordersPerHour * product.profitMargin / 100).toFixed(1);
-
-        data.push(product);
-    }
-    newData = false;
 
     switch (sortFunction) {
         case "0":
@@ -107,9 +103,6 @@ function update() {
             data.sort(function compare1(a, b) { return b.profitMargin - a.profitMargin });
             break;
         case "2":
-            data.sort(function compare2(a, b) { return b.expectedReturn - a.expectedReturn });
-            break;
-        case "3":
             data.sort(function compare3(a, b) { return b.expectedProfitPerHour - a.expectedProfitPerHour });
             break;
         default:
@@ -123,23 +116,35 @@ function update() {
 
 // Displays the filtered content
 function displayContent(filter) {
-    let content = $('<table>').addClass('info');
-    content.attr('id', 'infoTable');
-    let headerFields = "<th>Item Name</th><th>Buy Price</th><th>Sell Price</th><th>Profit Margin</th><th>Expected Return</th><th>Profit per Hour</th>";
-    let header = $('<tr>').html(headerFields);
-    content.append(header);
+    let content = document.getElementById("info");
+    let rowNum = content.rows.length - 1;
+    for (; rowNum > 0; rowNum--) {
+        content.deleteRow(rowNum);
+    }
+    rowNum = 1
     for (i in data) {
         let product = data[i];
         if (product.name.toUpperCase().indexOf(filter) > -1) {
-            let rowFields = "<td>" + product.name + "</td><td>" + numberWithCommas(product.buyOrder) + "</td><td>" + 
-            numberWithCommas(product.sellOffer) + "</td><td>" + numberWithCommas(product.profit) + " (" + numberWithCommas(product.profitMargin) + 
-            "%)</td><td>"+ numberWithCommas(product.expectedReturn) + "</td><td>" + numberWithCommas(product.expectedProfitPerHour) + "</td>";
-            let row = $('<tr>').html(rowFields);
-            content.append(row);
+            let row = content.insertRow(rowNum);
+            rowNum++;
+
+            let prodName = row.insertCell(0);
+            let prodBuyOrder = row.insertCell(1);
+            let prodSellOffer = row.insertCell(2);
+            let prodProfitMargin = row.insertCell(3);
+            let prodExpectedReturn = row.insertCell(4);
+            let prodExpectedProfitpHour = row.insertCell(5);
+
+            prodName.innerHTML = product.name;
+            prodBuyOrder.innerHTML = numberWithCommas(product.buyOrder);
+            prodSellOffer.innerHTML = numberWithCommas(product.sellOffer);
+            prodProfitMargin.innerHTML = numberWithCommas(product.profitMargin);
+            prodExpectedReturn.innerHTML = numberWithCommas(product.expectedReturn);
+            prodExpectedProfitpHour.innerHTML = numberWithCommas(product.expectedProfitPerHour);
         }
     }
-    $('#content').html(content);
 }
+
 
 
 /* This overloaded the Hypixel server and bugged out later API requests(at least from my API key)
@@ -178,8 +183,8 @@ $('#budget').keyup(function() {
     update();
 });
 
-// "0": Item Name; "1": Profit Margin; "2": Expected Return; "3": Profit per Hour
-let sortFunction = "3"; // Default sort function(Profit per Hour)
+// "0": Item Name; "1": Profit Margin; "2": Profit per Hour
+let sortFunction = "2"; // Default sort function(Profit per Hour)
 $('#sortFunction').val(sortFunction);
 $('#sortFunction').on('change', function() {
     sortFunction = $(this).val();

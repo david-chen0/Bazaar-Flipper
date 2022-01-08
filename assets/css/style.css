@@ -1,3 +1,7 @@
+html {
+    background-color: grey;
+}
+
 #title {
     text-align: center;
     font-family: 'Work Sans', sans-serif;
@@ -8,7 +12,6 @@ p {
 }
 
 table {
-    background-color: #7F7F7F;
     border-spacing: 0; /* Removes the whitespace between th's */
     width: 100%;
 }

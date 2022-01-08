@@ -29,14 +29,24 @@
                     <!-- Only three tax rates available so far -->
                     <option value="0">Item Name</option>
                     <option value="1">Profit Margin</option>
-                    <option value="2">Expected Return</option>
-                    <option value="3">Profit per Hour</option>
+                    <option value="2">Profit per Hour</option>
                 </select>
             </p>
         </div>
         <button type="button" id="refreshButton">Refresh data</button>
         <input type="text" id="searchBar" placeholder="Search by name">
-        <div id="content"></div>
+        <div id="content">
+            <table id="info">
+                <tr>
+                    <th>Item Name</th>
+                    <th>Buy Price</th>
+                    <th>Sell Price</th>
+                    <th>Profit Margin</th>
+                    <th>Expected Return</th>
+                    <th>Profit per Hour</th>
+                </tr>
+            </table>
+        </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
     <script src="assets/js/script.js"></script>
