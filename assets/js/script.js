@@ -96,13 +96,22 @@ function update() {
     }
 
     switch (sortFunction) {
-        case "0":
+        case 0:
             data.sort(function compare0(a, b) { return a.name.localeCompare(b.name); });
             break;
-        case "1":
-            data.sort(function compare1(a, b) { return b.profitMargin - a.profitMargin });
+        case 1:
+            data.sort(function compare1(a, b) { return b.buyOrder - a.buyOrder });
             break;
-        case "2":
+        case 2:
+            data.sort(function compare3(a, b) { return b.sellOffer - a.sellOffer });
+            break;
+        case 3:
+            data.sort(function compare3(a, b) { return b.profitMargin - a.profitMargin });
+            break;
+        case 4:
+            data.sort(function compare3(a, b) { return b.expectedReturn - a.expectedReturn });
+            break;
+        case 5:
             data.sort(function compare3(a, b) { return b.expectedProfitPerHour - a.expectedProfitPerHour });
             break;
         default:
@@ -138,9 +147,27 @@ function displayContent(filter) {
             prodName.innerHTML = product.name;
             prodBuyOrder.innerHTML = numberWithCommas(product.buyOrder);
             prodSellOffer.innerHTML = numberWithCommas(product.sellOffer);
-            prodProfitMargin.innerHTML = numberWithCommas(product.profitMargin);
+            prodProfitMargin.innerHTML = numberWithCommas(product.profitMargin) + "%";
             prodExpectedReturn.innerHTML = numberWithCommas(product.expectedReturn);
             prodExpectedProfitpHour.innerHTML = numberWithCommas(product.expectedProfitPerHour);
+        }
+    }
+    changeColumn(sortFunction, false);
+}
+
+
+// Removes column num's sortWithThis CSS class if bool is true, otherwise removes column num's sortWithThis CSS class
+function changeColumn(num, bool) {
+    let table = document.getElementById("info");
+    let tableRows = table.rows;
+    let rows = tableRows.length;
+
+    for (let i = 0; i < rows; i++) {
+        tr = tableRows[i];
+        if (bool) {
+            tr.cells[num].classList.remove("sortWithThis");
+        } else {
+            tr.cells[num].classList.add("sortWithThis");
         }
     }
 }
@@ -183,13 +210,18 @@ $('#budget').keyup(function() {
     update();
 });
 
-// "0": Item Name; "1": Profit Margin; "2": Profit per Hour
-let sortFunction = "2"; // Default sort function(Profit per Hour)
-$('#sortFunction').val(sortFunction);
-$('#sortFunction').on('change', function() {
-    sortFunction = $(this).val();
-    update();
-})
+// Determines which field is used for sorting
+let idList = ["itemName", "buyPrice", "sellPrice", "profitMargin", "expectedReturn", "profitpHour"];
+let sortFunction = 5;
+for (let num = 0; num < 6; num++) {
+    document.getElementById(idList[num]).onclick = function() {
+        if (num != sortFunction) {
+            changeColumn(sortFunction, true);
+            sortFunction = num;
+            update();
+        }
+    }
+}
 
 // Filters the list by whatever is in the search bar
 let searchFilter = "";

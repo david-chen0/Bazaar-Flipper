@@ -1,5 +1,13 @@
 html {
-    background-color: grey;
+    background-color: lightgray;
+}
+
+html, body { /* Removes whitespace on the sides and any horizontal overflow */
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
 }
 
 #title {
@@ -14,11 +22,53 @@ p {
 table {
     border-spacing: 0; /* Removes the whitespace between th's */
     width: 100%;
+    background-color: grey;
 }
 
 th {
     overflow: wrap;
     width: 10%;
+    height: 100%;
+    position: relative;
+}
+
+th:hover {
+    cursor: pointer;
+}
+
+th a {
+    display: block;
+    width: 100%;
+}
+
+th a span {
+    text-align: center;
+    margin-left: 10px;
+}
+
+th a .sort-by { 
+	padding-right: 18px;
+	position: relative;
+}
+
+a .sort-by:after {
+	border: 5px solid transparent;
+	content: "";
+	display: block;
+	height: 0;
+	right: 5px;
+    top: 40%;
+	position: absolute;
+	width: 0;
+    opacity: 0.5;
+}
+
+a .sort-by:after {
+	border-top-color: black;
+}
+
+.sortWithThis {
+    background-color: lightgray;
 }
 
 td {
