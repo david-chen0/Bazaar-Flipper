@@ -10,6 +10,26 @@ html, body { /* Removes whitespace on the sides and any horizontal overflow */
     overflow-x: hidden; 
 }
 
+#leftSide {
+    height: 100%;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    left: 0;
+}
+
+#rightSide {
+    height: 100%;
+    width: 80%;
+    position: fixed;
+    z-index: 1;
+    top: 10%;
+    overflow-x: hidden;
+    right: 0;
+}
+
 #title {
     text-align: center;
     font-family: 'Work Sans', sans-serif;
@@ -17,6 +37,7 @@ html, body { /* Removes whitespace on the sides and any horizontal overflow */
 
 p {
     text-align: center;
+    display: inline-block;
 }
 
 table {

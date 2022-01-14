@@ -7,69 +7,71 @@
         <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500&display=swap" rel="stylesheet">
     </head>
     <body>
-        <h1 id="title">Bazaar Flipper</h1>
-        <div id="inputs">
-            <p>
-                My current bazaar tax rate is 
-                <select name="taxSelector" id="taxRate">
-                    <!-- Only three tax rates available so far -->
-                    <option value="1.25">1.25%</option>
-                    <option value="1.125">1.125%</option>
-                    <option value="1">1.0%</option>
-                </select>
-            </p>
-            <p>My current budget is <input id="budget" type="text"> coins.</p>
+        <div id="leftSide">
+            <h1 id="title">Bazaar Flipper</h1>
+            <div id="inputs">
+                <p>
+                    My current tax rate is 
+                    <select name="taxSelector" id="taxRate">
+                        <!-- Only three tax rates available so far -->
+                        <option value="1.25">1.25%</option>
+                        <option value="1.125">1.125%</option>
+                        <option value="1">1.0%</option>
+                    </select>
+                </p>
+                <p>My current budget is <input id="budget" type="text"> coins.</p>
+            </div>
+            <input type="checkbox" id="filterBadResults" name="filterBadResults"
+            checked>
+            <label for="filterBadResults">Remove bad results? (IMPLEMENT THIS)</label>
+            <button type="button" id="refreshButton">Refresh data</button>
+            <div>
+                Last updated at: <p id="updateTime"></p>
+            </div>
+            <div id="messages">
+                <p>If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests
+                    at a time.</p>
+                <p>* = Sell this item to NPC instead of bazaar.</p>
+            </div>
         </div>
-        <div id="messages">
-            <p>If the numbers aren't refreshing, give it a minute. The Hypixel API can only take so many requests.</p>
-            <p>* = Sell this item to NPC instead of bazaar.</p>
-            <p>
-                Sort by: 
-                <select name="sortFunction" id="sortFunction">
-                    <!-- Only three tax rates available so far -->
-                    <option value="0">Item Name</option>
-                    <option value="1">Profit Margin</option>
-                    <option value="2">Profit per Hour</option>
-                </select>
-            </p>
-        </div>
-        <button type="button" id="refreshButton">Refresh data</button>
-        <input type="text" id="searchBar" placeholder="Search by name">
-        <div id="content">
-            <table id="info">
-                <tr>
-                    <th scope="col">
-                        <a id="itemName">
-                            <span class="sort-by">Item Name</span>
-                        </a>
-                    </th>
-                    <th scope="col">
-                        <a id="buyPrice">
-                            <span class="sort-by">Buy Price</span>
-                        </a>
-                    </th>
-                    <th scope="col">
-                        <a id="sellPrice">
-                            <span class="sort-by">Sell Price</span>
-                        </a>
-                    </th>
-                    <th scope="col">
-                        <a id="profitMargin">
-                            <span class="sort-by">Profit Margin</span>
-                        </a>
-                    </th>
-                    <th scope="col">
-                        <a id="expectedReturn">
-                            <span class="sort-by">Expected Return</span>
-                        </a>
-                    </th>
-                    <th scope="col">
-                        <a id="profitpHour">
-                            <span class="sort-by">Profit per Hour</span>
-                        </a>
-                    </th>
-                </tr>
-            </table>
+        <div id="rightSide">
+            <input type="text" id="searchBar" placeholder="Search by name">
+            <div id="content">
+                <table id="info">
+                    <tr>
+                        <th scope="col">
+                            <a id="itemName">
+                                <span class="sort-by">Item Name</span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a id="buyPrice">
+                                <span class="sort-by">Buy Price</span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a id="sellPrice">
+                                <span class="sort-by">Sell Price</span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a id="profitMargin">
+                                <span class="sort-by">Profit Margin</span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a id="expectedReturn">
+                                <span class="sort-by">Expected Return</span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a id="profitpHour">
+                                <span class="sort-by">Profit per Hour</span>
+                            </a>
+                        </th>
+                    </tr>
+                </table>
+            </div>
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>

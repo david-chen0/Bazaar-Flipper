@@ -70,6 +70,7 @@ function update() {
                 product.name = item.name;
             }
 
+            // Can't use quick status because it can be skewed by dupers/cheaters
             product.buyOrder = (Math.max.apply(null, sellSummary.map(function(p) { return p.pricePerUnit; })) + 0.1).toFixed(1);
             product.sellOffer = (Math.min.apply(null, buySummary.map(function(p) { return p.pricePerUnit; })) - 0.1).toFixed(1);
 
@@ -93,6 +94,16 @@ function update() {
             data.push(product);
         }
         newData = false;
+
+        // Updates the LAST UPDATED section to current time
+        let d = new Date();
+        let timeStr = "";
+        if (d.getHours() < 10) {
+            timeStr += "0"
+        }
+        timeStr += d.getHours() + ":";
+        timeStr += d.getMinutes();
+        document.getElementById("updateTime").innerHTML = timeStr;
     }
 
     switch (sortFunction) {
@@ -200,6 +211,7 @@ let taxRate = 1.25; // Default bazaar tax rate
 $('#taxRate').val(taxRate);
 $('#taxRate').on('change', function() {
     taxRate = $(this).val();
+    newData = true;
     update();
 });
 
@@ -207,6 +219,7 @@ let budget = 1000000; // Default budget
 $('#budget').val(budget);
 $('#budget').keyup(function() {
     budget = $(this).val();
+    newData = true;
     update();
 });
 
